@@ -6,6 +6,61 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "mysql"
   url      = env("DATABASE_URL")
+}
+
+model Student {
+  id          Int             @id @default(autoincrement())
+  username    String
+  password    String
+  strikes     StudentStrike[]
+  Classroom   Classroom?      @relation(fields: [classroomId], references: [id])
+  classroomId Int?
+
+  @@index([username], name: "username")
+}
+
+model Teacher {
+  id             Int             @id @default(autoincrement())
+  username       String
+  password       String
+  strikes        TeacherStrike[]
+  StudentStrikes StudentStrike[]
+  Classroom      Classroom[]
+
+  @@index([username], name: "username")
+}
+
+model Admin {
+  id             Int             @id @default(autoincrement())
+  username       String
+  password       String
+  TeacherStrikes TeacherStrike[]
+
+  @@index([username], name: "username")
+}
+
+model TeacherStrike {
+  id       Int       @id @default(autoincrement())
+  points   Int
+  teachers Teacher[]
+  admin    Admin     @relation(fields: [adminId], references: [id])
+  adminId  Int
+}
+
+model StudentStrike {
+  id        Int       @id @default(autoincrement())
+  points    Int
+  students  Student[]
+  teacher   Teacher   @relation(fields: [teacherId], references: [id])
+  teacherId Int
+}
+
+model Classroom {
+  id        Int       @id @default(autoincrement())
+  name      String
+  students  Student[]
+  teacher   Teacher?  @relation(fields: [teacherId], references: [id])
+  teacherId Int?
 }
