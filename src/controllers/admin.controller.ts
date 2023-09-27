@@ -1,14 +1,13 @@
 import { Express } from "express";
 
-import studentService from "../services/student.service";
+import adminService from "../services/admin.service";
 
 async function get(req: any, res: any, next: any) {
     try {
-        let students = await studentService.get();
-
+        const admins = await adminService.get();
         res.send({
             "data":
-                students
+                admins
         });
     } catch (error) {
         res.send((error as any).message)
@@ -17,12 +16,11 @@ async function get(req: any, res: any, next: any) {
 
 async function getOne(req: any, res: any, next: any) {
     try {
-        const studentId = parseInt(req.params.id);
-        const student = await studentService.getOne(studentId);
-
+        const adminId = parseInt(req.params.id);
+        const admin = await adminService.getOne(adminId);
         res.send({
             "data":
-                student
+                admin
         });
     } catch (error) {
         res.send((error as any).message)
@@ -31,10 +29,10 @@ async function getOne(req: any, res: any, next: any) {
 
 async function create(req: any, res: any, next: any) {
     try {
-        const student = await studentService.create(req.body);
+        const admin = await adminService.create(req.body);
         res.send({
             "data":
-                student
+                admin
         });
     } catch (error) {
         res.send((error as any).message)
@@ -43,11 +41,11 @@ async function create(req: any, res: any, next: any) {
 
 async function update(req: any, res: any, next: any) {
     try {
-        const studentId = parseInt(req.params.id);
-        const student = await studentService.update(studentId, req.body);
+        const adminId = parseInt(req.params.id);
+        const admin = await adminService.update(adminId, req.body);
         res.send({
             "data":
-                student
+                admin
         });
     } catch (error) {
         res.send((error as any).message)
@@ -56,11 +54,11 @@ async function update(req: any, res: any, next: any) {
 
 async function remove(req: any, res: any, next: any) {
     try {
-        const studentId = parseInt(req.params.id);
-        const student = await studentService.remove(studentId);
+        const adminId = parseInt(req.params.id);
+        const admin = await adminService.remove(adminId);
         res.send({
             "data":
-                student
+                admin
         });
     } catch (error) {
         res.send((error as any).message)
@@ -69,10 +67,10 @@ async function remove(req: any, res: any, next: any) {
 
 async function login(req: any, res: any, next: any) {
     try {
-        const student = await studentService.login(req.body.username, req.body.password);
+        const admin = await adminService.login(req.body.username, req.body.password);
         res.send({
             "data":
-                student
+                admin
         });
     } catch (error) {
         res.send((error as any).message)

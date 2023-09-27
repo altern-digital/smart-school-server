@@ -13,7 +13,7 @@ datasource db {
 model Student {
   id       Int             @id @default(autoincrement())
   username String
-  password String          @map("password_hash")
+  password String
   strikes  StudentStrike[]
 
   @@map("students")
@@ -22,7 +22,7 @@ model Student {
 model Teacher {
   id             Int             @id @default(autoincrement())
   username       String
-  password       String          @map("password_hash")
+  password       String
   studentStrikes StudentStrike[]
   strikes        TeacherStrike[]
   classrooms     Classroom[]
@@ -33,7 +33,7 @@ model Teacher {
 model Admin {
   id             Int             @id @default(autoincrement())
   username       String
-  password       String          @map("password_hash")
+  password       String
   teacherStrikes TeacherStrike[]
 
   @@map("admins")

@@ -3,22 +3,22 @@ import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 async function login(username: string, password: string) {
-    var student = prisma.student.findFirst({
+    var admin = prisma.admin.findFirst({
         where: {
             username: username,
             password: password
         }
     })
-    return student
+    return admin
 }
 
 async function get() {
-    var students = await prisma.student.findMany()
-    return students
+    var admins = await prisma.admin.findMany()
+    return admins
 }
 
 async function getOne(id: number) {
-    return await prisma.student.findUnique({
+    return await prisma.admin.findUnique({
         where: {
             id: id
         },
@@ -26,13 +26,13 @@ async function getOne(id: number) {
 }
 
 async function create(data: any) {
-    return await prisma.student.create({
+    return await prisma.admin.create({
         data: data
     })
 }
 
 async function update(id: number, data: any) {
-    return await prisma.student.update({
+    return await prisma.admin.update({
         where: {
             id: id
         },
@@ -41,7 +41,7 @@ async function update(id: number, data: any) {
 }
 
 async function remove(id: number) {
-    return await prisma.student.delete({
+    return await prisma.admin.delete({
         where: {
             id: id
         }
