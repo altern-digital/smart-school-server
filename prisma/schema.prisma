@@ -11,34 +11,32 @@ datasource db {
 }
 
 model Student {
-  id          Int             @id @default(autoincrement())
-  username    String
-  password    String
-  strikes     StudentStrike[]
-  Classroom   Classroom?      @relation(fields: [classroomId], references: [id])
-  classroomId Int?
+  id       Int             @id @default(autoincrement())
+  username String
+  password String          @map("password_hash")
+  strikes  StudentStrike[]
 
-  @@index([username], name: "username")
+  @@map("students")
 }
 
 model Teacher {
   id             Int             @id @default(autoincrement())
   username       String
-  password       String
+  password       String          @map("password_hash")
+  studentStrikes StudentStrike[]
   strikes        TeacherStrike[]
-  StudentStrikes StudentStrike[]
-  Classroom      Classroom[]
+  classrooms     Classroom[]
 
-  @@index([username], name: "username")
+  @@map("teachers")
 }
 
 model Admin {
   id             Int             @id @default(autoincrement())
   username       String
-  password       String
-  TeacherStrikes TeacherStrike[]
+  password       String          @map("password_hash")
+  teacherStrikes TeacherStrike[]
 
-  @@index([username], name: "username")
+  @@map("admins")
 }
 
 model TeacherStrike {
@@ -47,6 +45,8 @@ model TeacherStrike {
   teachers Teacher[]
   admin    Admin     @relation(fields: [adminId], references: [id])
   adminId  Int
+
+  @@map("teacher_strikes")
 }
 
 model StudentStrike {
@@ -55,12 +55,14 @@ model StudentStrike {
   students  Student[]
   teacher   Teacher   @relation(fields: [teacherId], references: [id])
   teacherId Int
+
+  @@map("student_strikes")
 }
 
 model Classroom {
-  id        Int       @id @default(autoincrement())
-  name      String
-  students  Student[]
-  teacher   Teacher?  @relation(fields: [teacherId], references: [id])
-  teacherId Int?
+  id       Int       @id @default(autoincrement())
+  name     String
+  teachers Teacher[]
+
+  @@map("classrooms")
 }

@@ -1,80 +1,46 @@
 import { PrismaClient } from '@prisma/client'
+
 const prisma = new PrismaClient()
 
-async function login(username: string, password: string) {
-  const user = await prisma.student.findFirst({
-    where: {
-      username,
-      password
-    }
-  })
-  if (!user) {
-    throw new Error('Username or password is incorrect')
-  }
-  return user
+async function get() {
+    return await prisma.student.findMany()
 }
 
-async function getStudentById(id: number) {
-  const student = await prisma.student.findUnique({
-    where: {
-      id
-    }
-  })
-  if (!student) {
-    throw new Error('Student not found')
-  }
-  return student
-}
-
-async function getStudents() {
-  const students = await prisma.student.findMany();
-  if (!students) {
-    throw new Error('Student not found')
-  }
-  return students
-}
-
-async function createStudent(data: any) {
-  try {
-    return await prisma.student.create({
-      data
+async function getOne(id: number) {
+    return await prisma.student.findUnique({
+        where: {
+            id: id
+        }
     })
-  } catch (err: any) {
-    throw new Error("Failed to create student")
-  }
-
 }
 
-async function updateStudent(id: number, data: any) {
-  const student = await prisma.student.update({
-    where: {
-      id
-    },
-    data
-  });
-  if (!student) {
-    throw new Error('Student not found')
-  }
-  return student
+async function create(data: any) {
+    return await prisma.student.create({
+        data: data
+    })
 }
 
-async function deleteStudent(id: number) {
-  const student = await prisma.student.delete({
-    where: {
-      id
-    }
-  });
-  if (!student) {
-    throw new Error('Student not found')
-  }
-  return student
+async function update(id: number, data: any) {
+    return await prisma.student.update({
+        where: {
+            id: id
+        },
+        data: data
+    })
 }
 
-export {
-  login,
-  getStudentById,
-  getStudents,
-  createStudent,
-  updateStudent,
-  deleteStudent
+async function remove(id: number) {
+    return await prisma.student.delete({
+        where: {
+            id: id
+        }
+    })
+}
+
+export default {
+    get,
+    getOne,
+    create,
+    update,
+    remove
 }

@@ -1,53 +1,56 @@
-import { Request, Response, NextFunction } from 'express';
+import { Express } from "express";
 
-import * as studentService from '../services/student.service';
+import studentService from "../services/student.service";
 
-async function get(req: Request, res: Response, next: NextFunction) {
-  try {
-    const students = await studentService.getStudents();
-    res.json(students);
-  } catch (err: any) {
-    res.status(401).json({ message: err.message });
-  }
+async function get(req: any, res: any, next: any) {
+    try {
+        const students = await studentService.get();
+        res.send(students);
+    } catch (error) {
+        next(error);
+    }
 }
 
-async function getById(req: Request, res: Response, next: NextFunction) {
-  try {
-    const student = await studentService.getStudentById(parseInt(req.params.id));
-    res.json(student);
-  } catch (err: any) {
-    res.status(401).json({ message: err.message });
-  }
+async function getOne(req: any, res: any, next: any) {
+    try {
+        const student = await studentService.getOne(req.params.id);
+        res.send(student);
+    } catch (error) {
+        next(error);
+    }
 }
 
-async function create(req: Request, res: Response, next: NextFunction) {
-  try {
-    const student = await studentService.createStudent(req.body);
-    res.status(201).json(student);
-  } catch (err: any) {
-    res.status(401).json({ message: err.message });
-  }
+async function create(req: any, res: any, next: any) {
+    try {
+        const student = await studentService.create(req.body);
+        res.send(student);
+    } catch (error) {
+        next(error);
+    }
 }
 
-async function update(req: Request, res: Response, next: NextFunction) {
-  try {
-    const student = await studentService.updateStudent(
-      parseInt(req.params.id),
-      req.body
-    );
-    res.json(student);
-  } catch (err: any) {
-    res.status(401).json({ message: err.message });
-  }
+async function update(req: any, res: any, next: any) {
+    try {
+        const student = await studentService.update(req.params.id, req.body);
+        res.send(student);
+    } catch (error) {
+        next(error);
+    }
 }
 
-async function remove(req: Request, res: Response, next: NextFunction) {
-  try {
-    await studentService.deleteStudent(parseInt(req.params.id));
-    res.sendStatus(204);
-  } catch (err: any) {
-    res.status(401).json({ message: err.message });
-  }
+async function remove(req: any, res: any, next: any) {
+    try {
+        const student = await studentService.remove(req.params.id);
+        res.send(student);
+    } catch (error) {
+        next(error);
+    }
 }
 
-export { get, getById, create, update, remove };
+export default {
+    get,
+    getOne,
+    create,
+    update,
+    remove
+}
