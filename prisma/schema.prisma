@@ -10,59 +10,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Student {
-  id       Int             @id @default(autoincrement())
-  username String
+model User {
+  id       Int     @id @default(autoincrement())
+  username String  @unique
   password String
-  strikes  StudentStrike[]
+  email    String?
 
   @@map("students")
-}
-
-model Teacher {
-  id             Int             @id @default(autoincrement())
-  username       String
-  password       String
-  studentStrikes StudentStrike[]
-  strikes        TeacherStrike[]
-  classrooms     Classroom[]
-
-  @@map("teachers")
-}
-
-model Admin {
-  id             Int             @id @default(autoincrement())
-  username       String
-  password       String
-  teacherStrikes TeacherStrike[]
-
-  @@map("admins")
-}
-
-model TeacherStrike {
-  id       Int       @id @default(autoincrement())
-  points   Int
-  teachers Teacher[]
-  admin    Admin     @relation(fields: [adminId], references: [id])
-  adminId  Int
-
-  @@map("teacher_strikes")
-}
-
-model StudentStrike {
-  id        Int       @id @default(autoincrement())
-  points    Int
-  students  Student[]
-  teacher   Teacher   @relation(fields: [teacherId], references: [id])
-  teacherId Int
-
-  @@map("student_strikes")
-}
-
-model Classroom {
-  id       Int       @id @default(autoincrement())
-  name     String
-  teachers Teacher[]
-
-  @@map("classrooms")
 }
