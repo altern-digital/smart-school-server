@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 
 import * as authService from "../services/auth";
 import * as profileService from "../services/profile";
+import { log } from "console";
 
 dotenv.config();
 
@@ -62,9 +63,13 @@ async function userMe(req: Request, res: Response) {
 }
 
 async function registerUser(req: Request, res: Response) {
-    const { identifier, password, accessCode } = req.body;
+    var { identifier, password, accessCode, data } = req.body;
 
     var role;
+
+    if (data == null) {
+        data = {};
+    }
 
     switch (accessCode) {
         case 668290:
@@ -79,13 +84,13 @@ async function registerUser(req: Request, res: Response) {
             return res.status(401).json({ message: 'Invalid (identifier, password, accessCode)' });
         }
 
-        const data = await authService.registerUser(identifier, password, role);
+        const registerData = await authService.registerUser(identifier, password, role, data);
 
-        const token = jwt.sign({ id: data.user.id, role: data.user.role }, JWT_SECRET);
+        const token = jwt.sign({ id: registerData.user.id, role: registerData.user.role }, JWT_SECRET);
 
         res.json({
             token,
-            ...data,
+            ...registerData,
         });
     }
     catch (e: any) {

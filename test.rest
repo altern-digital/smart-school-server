@@ -1,2 +1,10 @@
-GET http://localhost:3000/api/students/6
+POST http://localhost:3000/api/teachers/12/send-student-strike
 content-type: application/json
+
+{"data":{
+    "reason": "Jawir dewa koding :O",
+    "points": 1000000000000000000,
+    "studentIds": [
+        19
+    ]
+}}

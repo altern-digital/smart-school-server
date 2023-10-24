@@ -1,17 +1,19 @@
 import { Router } from 'express';
 
 import authRouter from './auth';
-import profileRouter from './profiles';
-import studentRouters from './students';
-import teacherRouters from './teachers';
+import profilesRouter from './profiles';
+import studentsRouters from './students';
+import teachersRouters from './teachers';
 import classroomRouter from './classrooms';
+import leaderboardsRouter from './leaderboards';
 
 const router = Router();
 
 router.use("/auth", authRouter);
-router.use("/profiles", profileRouter);
-router.use("/students", studentRouters);
-router.use("/teachers", teacherRouters);
+router.use("/profiles", profilesRouter);
+router.use("/students", studentsRouters);
+router.use("/teachers", teachersRouters);
 router.use("/classrooms", classroomRouter);
+router.use("/leaderboards", leaderboardsRouter);
 
 export default router;

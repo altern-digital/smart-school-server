@@ -31,17 +31,17 @@ async function getProfile(userId: number, role: string) {
     return profile;
 }
 
-async function createProfile(userId: number, role: string) {
+async function createProfile(userId: number, role: string, data: any = {}) {
     var profile;
 
     switch (role) {
         case 'STUDENT':
-            profile = studentService.createStudent(userId);
+            profile = studentService.createStudent(userId, data);
 
             break;
 
         case 'TEACHER':
-            profile = teacherService.createTeacher(userId);
+            profile = teacherService.createTeacher(userId, data);
             break;
 
         default:
@@ -51,7 +51,7 @@ async function createProfile(userId: number, role: string) {
     return profile;
 }
 
-async function updateProfile(profileId: number, role: string, data: any) {
+async function updateProfile(profileId: number, role: string, data: any = {}) {
     var profile;
 
     switch (role) {

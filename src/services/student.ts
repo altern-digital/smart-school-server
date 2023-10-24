@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client'
+import { log } from 'console';
 const prisma = new PrismaClient()
 
 const starting_points = 100;
@@ -9,7 +10,8 @@ async function getStudent(studentId: number) {
             id: studentId,
         },
         include: {
-            Strikes: true,
+            strikes: true,
+            classroom: true,
         },
     });
 
@@ -32,33 +34,38 @@ async function getStrikes(studentId: number) {
             id: studentId,
         },
         include: {
-            Strikes: true,
+            strikes: true,
+            classroom: true,
         },
     });
 
-    return student?.Strikes;
+    return student?.strikes;
 }
 
-async function updateStudent(studentId: number, data: any) {
+async function updateStudent(studentId: number, data: any = {}) {
     const student = await prisma.student.update({
         where: {
             id: studentId,
         },
         data: {
-            "name": data.name,
-            "nis": data.nis,
-            "identifier": data.nis,
-            "classroomId": data.classroomId,
+            name: data.name || undefined,
+            nis: data.nis || undefined,
+            identifier: data.nis || undefined,
+            classroom: data.classroomId ? {
+                connect: {
+                    id: data.classroomId,
+                },
+            } : undefined,
         },
         include: {
-            Strikes: true,
+            classroom: true,
         },
     });
 
     return student;
 }
 
-async function createStudent(userId: number) {
+async function createStudent(userId: number, data: any = {}) {
     var student = await prisma.student.findUnique({
         where: {
             userId: userId,
@@ -69,7 +76,7 @@ async function createStudent(userId: number) {
         student = await prisma.student.create({
             data: {
                 userId: userId,
-                Strikes: {
+                strikes: {
                     create: [
                         {
                             reason: "Siswa GMC",
@@ -80,7 +87,7 @@ async function createStudent(userId: number) {
             },
         });
 
-        await prisma.student.update({
+        student = await prisma.student.update({
             where: {
                 id: student.id,
             },
@@ -90,6 +97,8 @@ async function createStudent(userId: number) {
                 },
             },
         });
+
+        student = await updateStudent(student.id, data);
     }
 
     return student;

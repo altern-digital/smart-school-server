@@ -23,10 +23,10 @@ model Student {
   avatar      String?
   name        String          @default("User")
   identifier  String?
-  nis         String?
+  nis         String          @default("0XXX")
   points      Int             @default(0)
-  Strikes     StudentStrike[]
-  Classroom   Classroom?      @relation(fields: [classroomId], references: [id])
+  strikes     StudentStrike[]
+  classroom   Classroom?      @relation(fields: [classroomId], references: [id])
   classroomId Int?
 }
 
@@ -36,17 +36,16 @@ model Teacher {
   avatar         String?
   identifier     String?
   name           String          @default("User")
-  StudentStrikes StudentStrike[]
-  Classroom      Classroom?      @relation(fields: [classroomId], references: [id])
-  classroomId    Int?            @unique
+  studentStrikes StudentStrike[]
+  classroom      Classroom?      @relation(fields: [classroomId], references: [id])
+  classroomId    Int?
 }
 
 model Classroom {
-  id        Int       @id @default(autoincrement())
-  name      String
-  Students  Student[]
-  Teacher   Teacher?
-  teacherId Int?
+  id       Int       @id @default(autoincrement())
+  name     String
+  students Student[]
+  teachers Teacher[]
 }
 
 model StudentStrike {
@@ -55,7 +54,7 @@ model StudentStrike {
   points    Int       @default(0)
   active    Boolean   @default(true)
   date      DateTime  @default(now())
-  Students  Student[]
-  Teacher   Teacher?  @relation(fields: [teacherId], references: [id])
+  students  Student[]
+  teacher   Teacher?  @relation(fields: [teacherId], references: [id])
   teacherId Int?
 }

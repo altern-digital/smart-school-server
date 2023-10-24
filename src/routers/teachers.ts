@@ -6,7 +6,7 @@ const router = Router();
 
 router.get('/:teacherId', teacherController.getTeacher);
 router.get('/:teacherId/student-strikes', teacherController.getStrikes);
-router.post('/:teacherId/send-student-strike', teacherController.sendStrikes);
+router.post('/:teacherId/send-student-strike', teacherController.sendStudentStrike);
 
 router.put('/:teacherId', teacherController.updateTeacher);
 

@@ -43,9 +43,11 @@ async function getTeacher(req: Request, res: Response) {
     }
 }
 
-async function sendStrike(req: Request, res: Response) {
+async function sendStudentStrike(req: Request, res: Response) {
     const { teacherId } = req.params;
     const { data } = req.body;
+
+    console.log(data);
 
     const teacherIdInt = parseInt(teacherId);
 
@@ -116,4 +118,4 @@ async function updateTeacher(req: Request, res: Response) {
     }
 }
 
-export { getTeachers, getTeacher, sendStrike as sendStrikes, getStrikes, updateTeacher };
+export { getTeachers, getTeacher, sendStudentStrike, getStrikes, updateTeacher };

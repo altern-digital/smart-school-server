@@ -13,7 +13,7 @@ async function loginUser(identifier: string, password: string) {
     return user;
 }
 
-async function registerUser(identifier: string, password: string, role: string) {
+async function registerUser(identifier: string, password: string, role: string, data: any = {}) {
     var user = await prisma.user.findUnique({
         where: {
             identifier: identifier,
@@ -33,7 +33,7 @@ async function registerUser(identifier: string, password: string, role: string) 
         throw new Error('User already exists');
     }
 
-    var profile = await createProfile(user.id, role);
+    var profile = await createProfile(user.id, role, data);
 
     return {
         "user": {

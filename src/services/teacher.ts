@@ -7,7 +7,8 @@ async function getTeacher(teacherId: number) {
             id: teacherId,
         },
         include: {
-            StudentStrikes: true,
+            studentStrikes: true,
+            classroom: true,
         }
     });
 
@@ -30,7 +31,7 @@ async function sendStrikes(teacherId: number, points: number, reason: string, st
             reason,
             teacherId,
             points,
-            Students: {
+            students: {
                 connect: studentIds.map((id) => {
                     return {
                         id,
@@ -62,32 +63,35 @@ async function getStrikes(teacherId: number) {
             id: teacherId,
         },
         include: {
-            StudentStrikes: true,
+            studentStrikes: true,
         },
     });
 
-    return teacher?.StudentStrikes;
+    return teacher?.studentStrikes;
 }
 
-async function updateTeacher(teacherId: number, data: any) {
+async function updateTeacher(teacherId: number, data: any = {}) {
     const teacher = await prisma.teacher.update({
         where: {
             id: teacherId,
         },
         data: {
-            "name": data.name,
-            "identifier": data.nis,
-            "classroomId": data.classroomId,
+            name: data.name || undefined,
+            classroom: data.classroomId ? {
+                connect: {
+                    id: data.classroomId,
+                },
+            } : undefined,
         },
         include: {
-            StudentStrikes: true,
+            classroom: true,
         },
     });
 
     return teacher;
 }
 
-async function createTeacher(userId: number) {
+async function createTeacher(userId: number, data: any = {}) {
     var teacher = await prisma.teacher.findUnique({
         where: {
             userId: userId,
@@ -100,6 +104,8 @@ async function createTeacher(userId: number) {
                 userId: userId,
             },
         });
+
+        teacher = await updateTeacher(teacher.id, data);
     }
 
     return teacher;
