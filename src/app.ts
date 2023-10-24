@@ -1,8 +1,12 @@
 import http from 'http';
-import express, { Express } from 'express';
-import socketIo from 'socket.io';
 import dotenv from 'dotenv';
 import morgan from 'morgan';
+import express, { Express } from 'express';
+
+import { PrismaClient } from '@prisma/client'
+const prisma = new PrismaClient()
+
+import router from './routers';
 
 dotenv.config();
 
@@ -15,20 +19,10 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(morgan('short'));
 
-app.use(express.static('./src/public'));
+app.use("/api", router);
 
-const io = new socketIo.Server(server);
-
-io.on('connection', (socket: socketIo.Socket) => {
-  console.log(`A user connected ${socket.id}`);
-
-  socket.on('disconnect', () => {
-    console.log(`User disconnected ${socket.id}`);
-  });
-
-  socket.on('chat message', (message) => {
-    io.emit('chat message', message);
-  });
+app.get("/", (req, res) => {
+  res.send("ok");
 });
 
 server.listen(port, () => {

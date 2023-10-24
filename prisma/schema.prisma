@@ -11,10 +11,51 @@ datasource db {
 }
 
 model User {
-  id       Int     @id @default(autoincrement())
-  username String  @unique
-  password String
-  email    String?
+  id         Int    @id @default(autoincrement())
+  identifier String @unique
+  password   String
+  role       String
+}
 
-  @@map("students")
+model Student {
+  id          Int             @id @default(autoincrement())
+  userId      Int?            @unique
+  avatar      String?
+  name        String          @default("User")
+  identifier  String?
+  nis         String?
+  points      Int             @default(0)
+  Strikes     StudentStrike[]
+  Classroom   Classroom?      @relation(fields: [classroomId], references: [id])
+  classroomId Int?
+}
+
+model Teacher {
+  id             Int             @id @default(autoincrement())
+  userId         Int?            @unique
+  avatar         String?
+  identifier     String?
+  name           String          @default("User")
+  StudentStrikes StudentStrike[]
+  Classroom      Classroom?      @relation(fields: [classroomId], references: [id])
+  classroomId    Int?            @unique
+}
+
+model Classroom {
+  id        Int       @id @default(autoincrement())
+  name      String
+  Students  Student[]
+  Teacher   Teacher?
+  teacherId Int?
+}
+
+model StudentStrike {
+  id        Int       @id @default(autoincrement())
+  reason    String    @default("No reason")
+  points    Int       @default(0)
+  active    Boolean   @default(true)
+  date      DateTime  @default(now())
+  Students  Student[]
+  Teacher   Teacher?  @relation(fields: [teacherId], references: [id])
+  teacherId Int?
 }
