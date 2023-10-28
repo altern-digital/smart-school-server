@@ -1,12 +1,9 @@
 import { Request, Response } from "express";
-import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
 
-import * as authService from "../services/auth";
-import * as profileService from "../services/profile";
-import * as userService from "../services/user";
+import * as profileService from "./profile.service";
+import * as userService from "../users/user.service";
 
-async function getProfile(req: Request, res: Response) {
+export async function getProfile(req: Request, res: Response) {
     const { userId } = req.params;
 
     const userIdInt = parseInt(userId);
@@ -38,7 +35,7 @@ async function getProfile(req: Request, res: Response) {
     }
 }
 
-async function updateProfile(req: Request, res: Response) {
+export async function updateProfile(req: Request, res: Response) {
     const { userId } = req.params;
     const { data } = req.body;
 
@@ -70,5 +67,3 @@ async function updateProfile(req: Request, res: Response) {
         return;
     }
 }
-
-export { getProfile, updateProfile };

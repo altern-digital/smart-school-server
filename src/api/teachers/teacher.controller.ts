@@ -1,9 +1,8 @@
 import { Request, Response } from "express";
-import jwt from 'jsonwebtoken';
 
-import * as teacherService from "../services/teacher";
+import * as teacherService from "./teacher.service";
 
-async function getTeachers(req: Request, res: Response) {
+export async function getTeachers(req: Request, res: Response) {
     try {
         const teachers = await teacherService.getTeachers();
 
@@ -21,7 +20,7 @@ async function getTeachers(req: Request, res: Response) {
     }
 }
 
-async function getTeacher(req: Request, res: Response) {
+export async function getTeacher(req: Request, res: Response) {
     const { teacherId } = req.params;
 
     const teacherIdInt = parseInt(teacherId);
@@ -43,11 +42,9 @@ async function getTeacher(req: Request, res: Response) {
     }
 }
 
-async function sendStudentStrike(req: Request, res: Response) {
+export async function sendStudentStrike(req: Request, res: Response) {
     const { teacherId } = req.params;
     const { data } = req.body;
-
-    console.log(data);
 
     const teacherIdInt = parseInt(teacherId);
 
@@ -73,7 +70,7 @@ async function sendStudentStrike(req: Request, res: Response) {
     }
 }
 
-async function getStrikes(req: Request, res: Response) {
+export async function getStrikes(req: Request, res: Response) {
     const { teacherId } = req.params;
 
     const teacherIdInt = parseInt(teacherId);
@@ -95,7 +92,7 @@ async function getStrikes(req: Request, res: Response) {
     }
 }
 
-async function updateTeacher(req: Request, res: Response) {
+export async function updateTeacher(req: Request, res: Response) {
     const { teacherId } = req.params;
     const { data } = req.body;
 
@@ -117,5 +114,3 @@ async function updateTeacher(req: Request, res: Response) {
         return;
     }
 }
-
-export { getTeachers, getTeacher, sendStudentStrike, getStrikes, updateTeacher };

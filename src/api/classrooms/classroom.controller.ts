@@ -1,10 +1,8 @@
 import { Request, Response } from "express";
-import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
 
-import * as classroomService from "../services/classroom";
+import * as classroomService from "./classroom.service";
 
-async function getClassrooms(req: Request, res: Response) {
+export async function getClassrooms(req: Request, res: Response) {
     try {
         const classrooms = await classroomService.getClassroms();
 
@@ -21,5 +19,3 @@ async function getClassrooms(req: Request, res: Response) {
         return;
     }
 }
-
-export { getClassrooms };

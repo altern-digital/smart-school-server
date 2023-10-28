@@ -1,8 +1,8 @@
-import { PrismaClient } from '@prisma/client'
-import { createProfile } from './profile';
-const prisma = new PrismaClient()
+import prisma from '../../features/prisma/prisma';
 
-async function loginUser(identifier: string, password: string) {
+import { createProfile, getProfile } from '../profiles/profile.service';
+
+export async function loginUser(identifier: string, password: string) {
     const user = await prisma.user.findUnique({
         where: {
             identifier: identifier,
@@ -13,7 +13,7 @@ async function loginUser(identifier: string, password: string) {
     return user;
 }
 
-async function registerUser(identifier: string, password: string, role: string, data: any = {}) {
+export async function registerUser(identifier: string, password: string, role: string, data: any = {}) {
     var user = await prisma.user.findUnique({
         where: {
             identifier: identifier,
@@ -44,7 +44,7 @@ async function registerUser(identifier: string, password: string, role: string, 
     };
 }
 
-async function userMe(userId: number) {
+export async function userMe(userId: number) {
     const user = await prisma.user.findUnique({
         where: {
             id: userId,
@@ -53,5 +53,3 @@ async function userMe(userId: number) {
 
     return user;
 }
-
-export { loginUser, userMe, registerUser };

@@ -1,7 +1,6 @@
-import { PrismaClient } from '@prisma/client'
-const prisma = new PrismaClient()
+import prisma from '../../features/prisma/prisma';
 
-async function getStudentLeaderboard(classroomName: string) {
+export async function getStudentLeaderboard(classroomName: string) {
     const students = await prisma.student.findMany({
         where: {
             classroom: {
@@ -17,5 +16,3 @@ async function getStudentLeaderboard(classroomName: string) {
 
     return students;
 }
-
-export { getStudentLeaderboard };

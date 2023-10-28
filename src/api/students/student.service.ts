@@ -1,10 +1,10 @@
-import { PrismaClient } from '@prisma/client'
-import { log } from 'console';
-const prisma = new PrismaClient()
+import { Prisma } from '@prisma/client';
+import prisma from '../../features/prisma/prisma';
+import { DefaultArgs } from '@prisma/client/runtime/library';
 
 const starting_points = 100;
 
-async function getStudent(studentId: number) {
+export async function getStudent(studentId: number) {
     const student = await prisma.student.findUnique({
         where: {
             id: studentId,
@@ -22,13 +22,13 @@ async function getStudent(studentId: number) {
     return student;
 }
 
-async function getStudents() {
-    const students = await prisma.student.findMany();
+export async function getStudents(query: Prisma.StudentFindManyArgs<DefaultArgs> = {}) {
+    const students = await prisma.student.findMany(query);
 
     return students;
 }
 
-async function getStrikes(studentId: number) {
+export async function getStrikes(studentId: number) {
     const student = await prisma.student.findUnique({
         where: {
             id: studentId,
@@ -42,7 +42,7 @@ async function getStrikes(studentId: number) {
     return student?.strikes;
 }
 
-async function updateStudent(studentId: number, data: any = {}) {
+export async function updateStudent(studentId: number, data: any = {}) {
     const student = await prisma.student.update({
         where: {
             id: studentId,
@@ -50,7 +50,6 @@ async function updateStudent(studentId: number, data: any = {}) {
         data: {
             name: data.name || undefined,
             nis: data.nis || undefined,
-            identifier: data.nis || undefined,
             classroom: data.classroomId ? {
                 connect: {
                     id: data.classroomId,
@@ -65,7 +64,7 @@ async function updateStudent(studentId: number, data: any = {}) {
     return student;
 }
 
-async function createStudent(userId: number, data: any = {}) {
+export async function createStudent(userId: number, data: any = {}) {
     var student = await prisma.student.findUnique({
         where: {
             userId: userId,
@@ -103,5 +102,3 @@ async function createStudent(userId: number, data: any = {}) {
 
     return student;
 }
-
-export { getStudent, getStudents, getStrikes, updateStudent, createStudent };

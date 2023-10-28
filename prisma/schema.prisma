@@ -11,34 +11,37 @@ datasource db {
 }
 
 model User {
-  id         Int    @id @default(autoincrement())
-  identifier String @unique
+  id         Int     @id @default(autoincrement())
+  identifier String  @unique
   password   String
   role       String
+  avatar     String?
+  username   String?
+  email      String?
+  files      File[]
+  posts      Post[]
 }
 
 model Student {
-  id          Int             @id @default(autoincrement())
-  userId      Int?            @unique
-  avatar      String?
-  name        String          @default("User")
-  identifier  String?
-  nis         String          @default("0XXX")
-  points      Int             @default(0)
-  strikes     StudentStrike[]
-  classroom   Classroom?      @relation(fields: [classroomId], references: [id])
-  classroomId Int?
+  id                Int                @id @default(autoincrement())
+  userId            Int?               @unique
+  name              String             @default("User")
+  nis               String             @default("0XXX")
+  points            Int                @default(0)
+  strikes           StudentStrike[]
+  classroom         Classroom?         @relation(fields: [classroomId], references: [id])
+  classroomId       Int?
+  attendanceReports AttendanceReport[]
 }
 
 model Teacher {
-  id             Int             @id @default(autoincrement())
-  userId         Int?            @unique
-  avatar         String?
-  identifier     String?
-  name           String          @default("User")
-  studentStrikes StudentStrike[]
-  classroom      Classroom?      @relation(fields: [classroomId], references: [id])
-  classroomId    Int?
+  id                Int                @id @default(autoincrement())
+  userId            Int?               @unique
+  name              String             @default("User")
+  studentStrikes    StudentStrike[]
+  classroom         Classroom?         @relation(fields: [classroomId], references: [id])
+  classroomId       Int?
+  attendanceReports AttendanceReport[]
 }
 
 model Classroom {
@@ -57,4 +60,28 @@ model StudentStrike {
   students  Student[]
   teacher   Teacher?  @relation(fields: [teacherId], references: [id])
   teacherId Int?
+}
+
+model File {
+  id     Int    @id @default(autoincrement())
+  name   String
+  url    String
+  user   User?  @relation(fields: [userId], references: [id])
+  userId Int?
+}
+
+model Post {
+  id        Int      @id @default(autoincrement())
+  body      String
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    Int?
+  createdAt DateTime @default(now())
+}
+
+model AttendanceReport {
+  id        Int       @id @default(autoincrement())
+  students  Student[]
+  date      DateTime  @default(now())
+  teacher   Teacher   @relation(fields: [teacherId], references: [id])
+  teacherId Int
 }

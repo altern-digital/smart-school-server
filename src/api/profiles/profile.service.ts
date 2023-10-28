@@ -1,10 +1,9 @@
-import { PrismaClient } from '@prisma/client'
-const prisma = new PrismaClient()
+import prisma from '../../features/prisma/prisma';
 
-import * as studentService from './student';
-import * as teacherService from './teacher';
+import * as studentService from '../students/student.service';
+import * as teacherService from '../teachers/teacher.service';
 
-async function getProfile(userId: number, role: string) {
+export async function getProfile(userId: number, role: string) {
     var profile;
 
     switch (role) {
@@ -31,7 +30,7 @@ async function getProfile(userId: number, role: string) {
     return profile;
 }
 
-async function createProfile(userId: number, role: string, data: any = {}) {
+export async function createProfile(userId: number, role: string, data: any = {}) {
     var profile;
 
     switch (role) {
@@ -51,7 +50,7 @@ async function createProfile(userId: number, role: string, data: any = {}) {
     return profile;
 }
 
-async function updateProfile(profileId: number, role: string, data: any = {}) {
+export async function updateProfile(profileId: number, role: string, data: any = {}) {
     var profile;
 
     switch (role) {
@@ -69,5 +68,3 @@ async function updateProfile(profileId: number, role: string, data: any = {}) {
 
     return profile;
 }
-
-export { getProfile, createProfile, updateProfile };

@@ -3,10 +3,7 @@ import dotenv from 'dotenv';
 import morgan from 'morgan';
 import express, { Express } from 'express';
 
-import { PrismaClient } from '@prisma/client'
-const prisma = new PrismaClient()
-
-import router from './routers';
+import router from './api';
 
 dotenv.config();
 

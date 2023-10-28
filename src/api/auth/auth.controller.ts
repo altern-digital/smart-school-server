@@ -2,18 +2,15 @@ import { Request, Response } from "express";
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 
-import * as authService from "../services/auth";
-import * as profileService from "../services/profile";
-import { log } from "console";
+import * as authService from "./auth.service";
+import * as profileService from "../profiles/profile.service";
 
 dotenv.config();
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-async function loginUser(req: Request, res: Response) {
+export async function loginUser(req: Request, res: Response) {
     const { identifier, password } = req.body;
-
-    console.log(req.body);
 
     try {
         const user = await authService.loginUser(identifier, password);
@@ -42,11 +39,11 @@ async function loginUser(req: Request, res: Response) {
     }
 }
 
-async function userMe(req: Request, res: Response) {
-    const { userId } = req.body;
+export async function userMe(req: Request, res: Response) {
+    const { id } = req.body;
 
     try {
-        const user = await authService.userMe(userId);
+        const user = await authService.userMe(id);
 
         res.json({
             user,
@@ -62,25 +59,15 @@ async function userMe(req: Request, res: Response) {
     }
 }
 
-async function registerUser(req: Request, res: Response) {
-    var { identifier, password, accessCode, data } = req.body;
-
-    var role;
+export async function registerUser(req: Request, res: Response) {
+    var { identifier, password, role, data } = req.body;
 
     if (data == null) {
         data = {};
     }
 
-    switch (accessCode) {
-        case 668290:
-            role = 'STUDENT';
-            break;
-        case 706837:
-            role = 'TEACHER'
-    }
-
     try {
-        if (!identifier || !password || !accessCode) {
+        if (!identifier || !password || !role) {
             return res.status(401).json({ message: 'Invalid (identifier, password, accessCode)' });
         }
 
@@ -121,5 +108,3 @@ function authenticate(req: Request, res: Response, next: any) {
         next();
     });
 }
-
-export { loginUser, userMe, registerUser, authenticate };

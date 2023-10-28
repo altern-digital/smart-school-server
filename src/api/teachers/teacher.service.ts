@@ -1,7 +1,6 @@
-import { PrismaClient } from '@prisma/client'
-const prisma = new PrismaClient()
+import prisma from '../../features/prisma/prisma';
 
-async function getTeacher(teacherId: number) {
+export async function getTeacher(teacherId: number) {
     const teacher = await prisma.teacher.findUnique({
         where: {
             id: teacherId,
@@ -19,13 +18,13 @@ async function getTeacher(teacherId: number) {
     return teacher;
 }
 
-async function getTeachers() {
+export async function getTeachers() {
     const teachers = await prisma.teacher.findMany();
 
     return teachers;
 }
 
-async function sendStrikes(teacherId: number, points: number, reason: string, studentIds: number[]) {
+export async function sendStrikes(teacherId: number, points: number, reason: string, studentIds: number[]) {
     const strike = await prisma.studentStrike.create({
         data: {
             reason,
@@ -57,7 +56,7 @@ async function sendStrikes(teacherId: number, points: number, reason: string, st
     return strike;
 }
 
-async function getStrikes(teacherId: number) {
+export async function getStrikes(teacherId: number) {
     const teacher = await prisma.teacher.findUnique({
         where: {
             id: teacherId,
@@ -70,7 +69,7 @@ async function getStrikes(teacherId: number) {
     return teacher?.studentStrikes;
 }
 
-async function updateTeacher(teacherId: number, data: any = {}) {
+export async function updateTeacher(teacherId: number, data: any = {}) {
     const teacher = await prisma.teacher.update({
         where: {
             id: teacherId,
@@ -91,7 +90,7 @@ async function updateTeacher(teacherId: number, data: any = {}) {
     return teacher;
 }
 
-async function createTeacher(userId: number, data: any = {}) {
+export async function createTeacher(userId: number, data: any = {}) {
     var teacher = await prisma.teacher.findUnique({
         where: {
             userId: userId,
@@ -110,5 +109,3 @@ async function createTeacher(userId: number, data: any = {}) {
 
     return teacher;
 }
-
-export { getTeacher, getTeachers, sendStrikes, getStrikes, updateTeacher, createTeacher };
