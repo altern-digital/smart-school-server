@@ -1,0 +1,7 @@
+POST https://smartschool.globalmultimedia.sch.id/api/auth/login
+content-type: application/json
+
+{
+    "identifier": "mercia.13@smartschool",
+    "password": "8286"
+}

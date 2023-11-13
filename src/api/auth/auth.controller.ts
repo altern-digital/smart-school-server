@@ -12,6 +12,8 @@ const JWT_SECRET = process.env.JWT_SECRET;
 export async function loginUser(req: Request, res: Response) {
     const { identifier, password } = req.body;
 
+    console.log(req.body);
+
     try {
         const user = await authService.loginUser(identifier, password);
 

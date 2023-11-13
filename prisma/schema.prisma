@@ -14,8 +14,8 @@ model User {
   id         Int    @id @default(autoincrement())
   identifier String @unique
   password   String
-  role       Role   @relation(fields: [roleId], references: [id])
-  roleId     Int
+  role       Role?  @relation(fields: [roleId], references: [id])
+  roleId     Int?
 }
 
 model Student {
