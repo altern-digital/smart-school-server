@@ -11,6 +11,7 @@ export async function getTeacher(teacherId: number) {
             studentStrikes: {
                 include: {
                     students: true,
+                    teacher: true,
                 },
             },
             classroom: true,
