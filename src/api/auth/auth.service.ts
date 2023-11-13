@@ -1,12 +1,13 @@
-import prisma from '../../features/prisma/prisma';
-
-import { createProfile, getProfile } from '../profiles/profile.service';
+import prisma from '../../features/prisma';
 
 export async function loginUser(identifier: string, password: string) {
     const user = await prisma.user.findUnique({
         where: {
             identifier: identifier,
             password: password,
+        },
+        include: {
+            role: true,
         },
     });
 
@@ -19,35 +20,15 @@ export async function registerUser(identifier: string, password: string, role: s
             identifier: identifier,
         },
     });
-
-    if (!user) {
-        user = await prisma.user.create({
-            data: {
-                identifier,
-                password,
-                role,
-            },
-        });
-    }
-    else {
-        throw new Error('User already exists');
-    }
-
-    var profile = await createProfile(user.id, role, data);
-
-    return {
-        "user": {
-            "id": user.id,
-            "role": user.role
-        },
-        profile,
-    };
 }
 
 export async function userMe(userId: number) {
     const user = await prisma.user.findUnique({
         where: {
             id: userId,
+        },
+        include: {
+            role: true,
         },
     });
 

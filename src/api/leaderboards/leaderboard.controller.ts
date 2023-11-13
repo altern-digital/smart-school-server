@@ -6,5 +6,5 @@ export async function getStudentLeaderboard(req: Request, res: Response) {
     const classroomName = req.params.classroomName;
     const students = await leaderboardService.getStudentLeaderboard(classroomName);
 
-    res.json({ "data": students });
+    res.json(students);
 }

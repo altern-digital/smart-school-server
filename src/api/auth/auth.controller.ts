@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
-import jwt from 'jsonwebtoken';
+import jsonwebtoken from 'jsonwebtoken';
 import dotenv from 'dotenv';
 
 import * as authService from "./auth.service";
-import * as profileService from "../profiles/profile.service";
+import * as userService from "../users/user.service";
 
 dotenv.config();
 
@@ -19,12 +19,11 @@ export async function loginUser(req: Request, res: Response) {
             return res.status(401).json({ message: 'Invalid identifier or password' });
         }
 
-        const token = jwt.sign({ id: user.id, role: user.role }, JWT_SECRET);
-
-        const profile = await profileService.getProfile(user.id, user.role);
+        const jwt = jsonwebtoken.sign({ id: user.id }, JWT_SECRET);
+        const profile = await userService.getProfile(user.id);
 
         res.json({
-            token,
+            jwt,
             user,
             profile,
         });
@@ -40,13 +39,21 @@ export async function loginUser(req: Request, res: Response) {
 }
 
 export async function userMe(req: Request, res: Response) {
-    const { id } = req.body;
+    const { id } = req.body.user;
 
     try {
         const user = await authService.userMe(id);
 
+        if (!user) {
+            return res.status(401).json({ message: 'Invalid identifier or password' });
+        }
+
+        const jwt = jsonwebtoken.sign({ id: user.id }, JWT_SECRET);
+        const profile = await userService.getProfile(user.id);
         res.json({
+            jwt,
             user,
+            profile,
         });
     }
     catch (e: any) {
@@ -72,13 +79,6 @@ export async function registerUser(req: Request, res: Response) {
         }
 
         const registerData = await authService.registerUser(identifier, password, role, data);
-
-        const token = jwt.sign({ id: registerData.user.id, role: registerData.user.role }, JWT_SECRET);
-
-        res.json({
-            token,
-            ...registerData,
-        });
     }
     catch (e: any) {
         res.status(401).json({
@@ -90,21 +90,24 @@ export async function registerUser(req: Request, res: Response) {
     }
 }
 
-function authenticate(req: Request, res: Response, next: any) {
-    const token = req.headers.authorization;
+export function authenticate(req: Request, res: Response, next: any) {
+    const authHeader = req.headers.authorization;
 
-    if (!token) {
-        return res.status(401).json({ message: 'No token provided' });
+    if (authHeader) {
+        const token = authHeader.split(' ')[1];
+
+        jsonwebtoken.verify(token, JWT_SECRET, (err: any, user: any) => {
+            if (err) {
+                console.log(err);
+
+                return res.sendStatus(403);
+            }
+
+            req.body.user = user;
+            next();
+        });
     }
-
-    jwt.verify(token, JWT_SECRET, (err: any, decoded: any) => {
-        if (err) {
-            return res.status(401).json({ message: 'Unauthorized' });
-        }
-
-        req.body.userId = decoded.id;
-        req.body.role = decoded.role;
-
-        next();
-    });
+    else {
+        res.sendStatus(401);
+    }
 }

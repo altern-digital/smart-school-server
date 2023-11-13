@@ -4,9 +4,10 @@ import * as teacherController from './teacher.controller';
 
 const router = Router();
 
+router.get('/', teacherController.getTeachers);
 router.get('/:teacherId', teacherController.getTeacher);
 router.get('/:teacherId/student-strikes', teacherController.getStrikes);
-router.post('/:teacherId/send-student-strike', teacherController.sendStudentStrike);
+router.post('/:teacherId/student-strikes', teacherController.sendStudentStrike);
 
 router.put('/:teacherId', teacherController.updateTeacher);
 

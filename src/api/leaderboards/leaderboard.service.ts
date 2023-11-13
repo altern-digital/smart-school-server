@@ -1,4 +1,4 @@
-import prisma from '../../features/prisma/prisma';
+import prisma from '../../features/prisma';
 
 export async function getStudentLeaderboard(classroomName: string) {
     const students = await prisma.student.findMany({
@@ -9,9 +9,17 @@ export async function getStudentLeaderboard(classroomName: string) {
                 },
             },
         },
-        orderBy: {
-            points: 'desc',
+        include: {
+            strikes: true,
         },
+        orderBy: [
+            {
+                points: "desc",
+            },
+            {
+                name: "asc",
+            },
+        ],
     });
 
     return students;

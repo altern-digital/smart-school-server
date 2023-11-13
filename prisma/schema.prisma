@@ -11,15 +11,11 @@ datasource db {
 }
 
 model User {
-  id         Int     @id @default(autoincrement())
-  identifier String  @unique
+  id         Int    @id @default(autoincrement())
+  identifier String @unique
   password   String
-  role       String
-  avatar     String?
-  username   String?
-  email      String?
-  files      File[]
-  posts      Post[]
+  role       Role   @relation(fields: [roleId], references: [id])
+  roleId     Int
 }
 
 model Student {
@@ -29,9 +25,9 @@ model Student {
   nis               String             @default("0XXX")
   points            Int                @default(0)
   strikes           StudentStrike[]
+  attendanceReports AttendanceReport[]
   classroom         Classroom?         @relation(fields: [classroomId], references: [id])
   classroomId       Int?
-  attendanceReports AttendanceReport[]
 }
 
 model Teacher {
@@ -39,9 +35,9 @@ model Teacher {
   userId            Int?               @unique
   name              String             @default("User")
   studentStrikes    StudentStrike[]
+  attendanceReports AttendanceReport[]
   classroom         Classroom?         @relation(fields: [classroomId], references: [id])
   classroomId       Int?
-  attendanceReports AttendanceReport[]
 }
 
 model Classroom {
@@ -52,30 +48,15 @@ model Classroom {
 }
 
 model StudentStrike {
-  id        Int       @id @default(autoincrement())
-  reason    String    @default("No reason")
-  points    Int       @default(0)
-  active    Boolean   @default(true)
-  date      DateTime  @default(now())
-  students  Student[]
-  teacher   Teacher?  @relation(fields: [teacherId], references: [id])
-  teacherId Int?
-}
-
-model File {
-  id     Int    @id @default(autoincrement())
-  name   String
-  url    String
-  user   User?  @relation(fields: [userId], references: [id])
-  userId Int?
-}
-
-model Post {
-  id        Int      @id @default(autoincrement())
-  body      String
-  user      User?    @relation(fields: [userId], references: [id])
-  userId    Int?
-  createdAt DateTime @default(now())
+  id          Int       @id @default(autoincrement())
+  reason      String    @default("No reason")
+  description String    @default("No description")
+  amount      Int       @default(0)
+  active      Boolean   @default(true)
+  date        DateTime  @default(now())
+  students    Student[]
+  teacher     Teacher?  @relation(fields: [teacherId], references: [id])
+  teacherId   Int?
 }
 
 model AttendanceReport {
@@ -84,4 +65,10 @@ model AttendanceReport {
   date      DateTime  @default(now())
   teacher   Teacher   @relation(fields: [teacherId], references: [id])
   teacherId Int
+}
+
+model Role {
+  id   Int    @id @default(autoincrement())
+  name String
+  User User[]
 }

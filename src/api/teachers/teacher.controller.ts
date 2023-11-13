@@ -4,11 +4,23 @@ import * as teacherService from "./teacher.service";
 
 export async function getTeachers(req: Request, res: Response) {
     try {
-        const teachers = await teacherService.getTeachers();
+        var { name, limit, offset } = req.query;
 
-        res.json({
-            "data": [...teachers],
+        const teachers = await teacherService.getTeachers({
+            where: {
+                name: {
+                    contains: name ? name.toString() : undefined,
+                },
+            },
+            include: {
+                classroom: true,
+                studentStrikes: true,
+            },
+            take: limit ? parseInt(limit.toString()) : 10,
+            skip: offset ? parseInt(offset.toString()) : 0,
         });
+
+        res.json(teachers);
     }
     catch (e: any) {
         res.status(401).json({
@@ -21,16 +33,14 @@ export async function getTeachers(req: Request, res: Response) {
 }
 
 export async function getTeacher(req: Request, res: Response) {
-    const { teacherId } = req.params;
+    const { id } = req.params;
 
-    const teacherIdInt = parseInt(teacherId);
+    const idInt = parseInt(id);
 
     try {
-        const teacher = await teacherService.getTeacher(teacherIdInt);
+        const teacher = await teacherService.getTeacher(idInt);
 
-        res.json({
-            "data": teacher,
-        });
+        res.json(teacher);
     }
     catch (e: any) {
         res.status(401).json({
@@ -43,22 +53,21 @@ export async function getTeacher(req: Request, res: Response) {
 }
 
 export async function sendStudentStrike(req: Request, res: Response) {
-    const { teacherId } = req.params;
-    const { data } = req.body;
+    const { id } = req.params;
+    const { amount, reason, students } = req.body;
 
-    const teacherIdInt = parseInt(teacherId);
+    const idInt = parseInt(id);
+
 
     try {
         const strikes = await teacherService.sendStrikes(
-            teacherIdInt,
-            parseInt(data.points),
-            data.reason,
-            data.studentIds,
+            idInt,
+            parseInt(amount),
+            reason,
+            students,
         );
 
-        res.json({
-            "data": strikes,
-        });
+        res.json(strikes);
     }
     catch (e: any) {
         res.status(401).json({
@@ -71,12 +80,12 @@ export async function sendStudentStrike(req: Request, res: Response) {
 }
 
 export async function getStrikes(req: Request, res: Response) {
-    const { teacherId } = req.params;
+    const { id } = req.params;
 
-    const teacherIdInt = parseInt(teacherId);
+    const idInt = parseInt(id);
 
     try {
-        const strikes = await teacherService.getStrikes(teacherIdInt);
+        const strikes = await teacherService.getStrikes(idInt);
 
         res.json({
             "data": strikes,
@@ -93,13 +102,13 @@ export async function getStrikes(req: Request, res: Response) {
 }
 
 export async function updateTeacher(req: Request, res: Response) {
-    const { teacherId } = req.params;
+    const { id } = req.params;
     const { data } = req.body;
 
-    const teacherIdInt = parseInt(teacherId);
+    const idInt = parseInt(id);
 
     try {
-        const teacher = await teacherService.updateTeacher(teacherIdInt, data);
+        const teacher = await teacherService.updateTeacher(idInt, data);
 
         res.json({
             "data": teacher,

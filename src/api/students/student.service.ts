@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client';
-import prisma from '../../features/prisma/prisma';
+import prisma from '../../features/prisma';
 import { DefaultArgs } from '@prisma/client/runtime/library';
 
 const starting_points = 100;
@@ -10,7 +10,11 @@ export async function getStudent(studentId: number) {
             id: studentId,
         },
         include: {
-            strikes: true,
+            strikes: {
+                include: {
+                    teacher: true,
+                }
+            },
             classroom: true,
         },
     });
@@ -34,7 +38,11 @@ export async function getStrikes(studentId: number) {
             id: studentId,
         },
         include: {
-            strikes: true,
+            strikes: {
+                include: {
+                    teacher: true,
+                }
+            },
             classroom: true,
         },
     });
@@ -79,7 +87,6 @@ export async function createStudent(userId: number, data: any = {}) {
                     create: [
                         {
                             reason: "Siswa GMC",
-                            points: starting_points,
                         },
                     ],
                 },

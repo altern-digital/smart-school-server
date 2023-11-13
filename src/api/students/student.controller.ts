@@ -4,7 +4,6 @@ import * as studentService from "./student.service";
 
 export async function getStudents(req: Request, res: Response) {
     var { name, limit, offset } = req.query;
-
     const students = await studentService.getStudents({
         where: {
             name: {
@@ -13,14 +12,17 @@ export async function getStudents(req: Request, res: Response) {
         },
         include: {
             classroom: true,
+            strikes: {
+                orderBy: {
+                    date: "desc",
+                },
+            },
         },
-        take: limit ? parseInt(limit.toString()) : undefined,
-        skip: offset ? parseInt(offset.toString()) : undefined,
+        take: limit ? parseInt(limit.toString()) : 10,
+        skip: offset ? parseInt(offset.toString()) : 0,
     });
 
-    res.json({
-        "data": [...students],
-    });
+    res.json(students);
     try {
     }
     catch (e: any) {
@@ -41,9 +43,7 @@ export async function getStudent(req: Request, res: Response) {
     try {
         const student = await studentService.getStudent(studentIdInt);
 
-        res.json({
-            "data": student,
-        });
+        res.json(student);
     }
     catch (e: any) {
         res.status(401).json({

@@ -1,4 +1,6 @@
-import prisma from '../../features/prisma/prisma';
+import { Prisma } from '@prisma/client';
+import prisma from '../../features/prisma';
+import { DefaultArgs } from '@prisma/client/runtime/library';
 
 export async function getTeacher(teacherId: number) {
     const teacher = await prisma.teacher.findUnique({
@@ -18,24 +20,25 @@ export async function getTeacher(teacherId: number) {
     return teacher;
 }
 
-export async function getTeachers() {
-    const teachers = await prisma.teacher.findMany();
+export async function getTeachers(query: Prisma.TeacherFindManyArgs<DefaultArgs> = {}) {
+    const teachers = await prisma.teacher.findMany(query);
 
     return teachers;
 }
 
-export async function sendStrikes(teacherId: number, points: number, reason: string, studentIds: number[]) {
+export async function sendStrikes(teacherId: number, amount: number, reason: string, students: any) {
     const strike = await prisma.studentStrike.create({
         data: {
             reason,
             teacherId,
-            points,
+            amount: amount,
             students: {
-                connect: studentIds.map((id) => {
+                connect: students.map((student: any) => {
                     return {
-                        id,
+                        id: student.id,
                     };
-                }),
+                }
+                ),
             },
         },
     });
@@ -43,12 +46,14 @@ export async function sendStrikes(teacherId: number, points: number, reason: str
     await prisma.student.updateMany({
         where: {
             id: {
-                in: studentIds,
+                in: students.map((student: any) => {
+                    return student.id;
+                }),
             },
         },
         data: {
             points: {
-                increment: points,
+                increment: amount,
             },
         },
     });
