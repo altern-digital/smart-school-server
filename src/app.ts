@@ -1,9 +1,9 @@
-import http from 'http';
-import dotenv from 'dotenv';
-import morgan from 'morgan';
-import express, { Express } from 'express';
+import http from "http";
+import dotenv from "dotenv";
+import morgan from "morgan";
+import express, { Express } from "express";
 
-import router from './api';
+import router from "./api";
 
 dotenv.config();
 
@@ -14,9 +14,9 @@ const server = http.createServer(app);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(morgan('short'));
+app.use(morgan("short"));
 
-app.use("/api", router);
+app.use("/api/v1", router);
 
 app.get("/", (req, res) => {
   res.send("ok");

@@ -48,15 +48,27 @@ model Classroom {
 }
 
 model StudentStrike {
-  id          Int       @id @default(autoincrement())
-  reason      String    @default("No reason")
-  description String    @default("No description")
-  amount      Int       @default(0)
-  active      Boolean   @default(true)
-  date        DateTime  @default(now())
-  students    Student[]
-  teacher     Teacher?  @relation(fields: [teacherId], references: [id])
+  id          Int      @id @default(autoincrement())
+  reason      String   @default("No reason")
+  description String   @default("No description")
+  amount      Int      @default(0)
+  active      Boolean  @default(true)
+  date        DateTime @default(now())
   teacherId   Int?
+  typeId      Int?
+
+  type     StudentStrikeType? @relation(fields: [typeId], references: [id])
+  teacher  Teacher?           @relation(fields: [teacherId], references: [id])
+  students Student[]
+}
+
+model StudentStrikeType {
+  id             Int             @id @default(autoincrement())
+  name           String
+  amount         Int             @default(0)
+  hasDescription Boolean         @default(false)
+  description    String?         @default("No description")
+  studentStrikes StudentStrike[]
 }
 
 model AttendanceReport {
@@ -71,4 +83,14 @@ model Role {
   id   Int    @id @default(autoincrement())
   name String
   User User[]
+}
+
+model Complaint {
+  id      Int    @id @default(autoincrement())
+  message String @default("No message")
+}
+
+model FeatureRequest {
+  id      Int    @id @default(autoincrement())
+  message String @default("No message")
 }
