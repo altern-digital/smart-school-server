@@ -31,6 +31,6 @@ export async function userMe(userId: number) {
             role: true,
         },
     });
-
+    
     return user;
 }

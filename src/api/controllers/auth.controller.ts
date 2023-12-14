@@ -1,4 +1,4 @@
-import Koa from 'koa';
+import Koa, { Next } from 'koa';
 import jsonwebtoken from "jsonwebtoken";
 import dotenv from "dotenv";
 
@@ -48,8 +48,9 @@ export async function loginUser(context : Koa.Context) {
 }
 
 export async function userMe(context : Koa.Context) {
-  const { id } = context.request.body.user;
-
+  
+  const { id } = context.user;
+  
   try {
     const user = await authService.userMe(id);
 
@@ -83,7 +84,7 @@ export async function userMe(context : Koa.Context) {
 }
 
 export async function changePassword(context : Koa.Context) {
-  const { id } = context.request.body.user;
+  const { id } = context.user;
   const { newPassword } = context.request.body;
 
   try {
@@ -153,8 +154,8 @@ export async function registerUser(context : Koa.Context) {
   }
 }
 
-export function authenticate(context : Koa.Context, next : any) {
-  const authHeader = context.request.headers.authorization;
+export async function authenticate(context : Koa.Context, next : Next) {
+  const authHeader = context.request.header.authorization;
 
   if (authHeader) {
     const token = authHeader.split(" ")[1];
@@ -174,8 +175,7 @@ export function authenticate(context : Koa.Context, next : any) {
         return;
       }
 
-      context.request.body.user = user;
-      next();
+      context.user = user;
     });
   } else {
     context.status = 401;
@@ -184,7 +184,8 @@ export function authenticate(context : Koa.Context, next : any) {
         message: "Unauthorized",
       },
     };
-
     return;
   }
+
+  await next();
 }
