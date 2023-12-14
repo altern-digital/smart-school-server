@@ -1,27 +1,22 @@
-import http from "http";
-import dotenv from "dotenv";
-import morgan from "morgan";
-import express, { Express } from "express";
+import Koa from 'koa';
+import Router from '@koa/router';
+import KoaLogger from 'koa-logger';
+import { bodyParser } from '@koa/bodyparser';
 
-import router from "./api";
+import api from './api';
 
-dotenv.config();
+const app = new Koa();
+const router = new Router();
 
-const app: Express = express();
-const port = process.env.PORT || 3000;
-const server = http.createServer(app);
+app.use(bodyParser());
+app.use(KoaLogger());
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+router.use('/api', api.routes());
 
-app.use(morgan("short"));
-
-app.use("/api/v1", router);
-
-app.get("/", (req, res) => {
-  res.send("ok");
+router.get('/', (ctx) => {
+  ctx.body = 'Server Active!';
 });
 
-server.listen(port, () => {
-  console.log(`Listening on port ${port}`);
-});
+app.use(router.routes());
+
+export default app; 

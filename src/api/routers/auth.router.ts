@@ -1,7 +1,7 @@
-import { Router } from "express";
-import * as authController from "./auth.controller";
+import Router from '@koa/router';
+import * as authController from "../controllers/auth.controller";
 
-const router = Router();
+const router = new Router();
 
 router.post("/login", authController.loginUser);
 router.post("/register", authController.registerUser);

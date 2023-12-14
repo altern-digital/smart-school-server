@@ -1,9 +1,9 @@
-import { Request, Response } from "express";
+import Koa from 'koa';
 
-import * as studentService from "./student.service";
+import * as studentService from "../services/student.service";
 
-export async function getStudents(req: Request, res: Response) {
-    var { name, limit, offset } = req.query;
+export async function getStudents(context : Koa.Context) {
+    var { name, limit, offset } = context.request.query;
     const students = await studentService.getStudents({
         where: {
             name: {
@@ -22,80 +22,85 @@ export async function getStudents(req: Request, res: Response) {
         skip: offset ? parseInt(offset.toString()) : 0,
     });
 
-    res.json(students);
+    context.body = students;
+
     try {
     }
     catch (e: any) {
-        res.status(401).json({
-            error: {
-                message: e.message
-            }
-        });
+        context.status = 401;
+    context.body = {
+      error: {
+        message: e,
+      },
+    };
         return;
     }
 }
 
-export async function getStudent(req: Request, res: Response) {
-    const { studentId } = req.params;
+export async function getStudent(context : Koa.Context) {
+    const { studentId } = context.params;
 
     const studentIdInt = parseInt(studentId);
 
     try {
         const student = await studentService.getStudent(studentIdInt);
 
-        res.json(student);
+        context.body = student;
     }
     catch (e: any) {
-        res.status(401).json({
-            error: {
-                message: e.message
-            }
-        });
+        context.status = 401;
+    context.body = {
+      error: {
+        message: e,
+      },
+    };
         return;
     }
 }
 
-export async function getStrikes(req: Request, res: Response) {
-    const { studentId } = req.params;
+export async function getStrikes(context : Koa.Context) {
+    const { studentId } = context.params;
 
     const studentIdInt = parseInt(studentId);
 
     try {
         const strikes = await studentService.getStrikes(studentIdInt);
 
-        res.json({
+        context.body = {
             "data": strikes,
-        });
+        }
     }
     catch (e: any) {
-        res.status(401).json({
-            error: {
-                message: e.message
-            }
-        });
+        context.status = 401;
+    context.body = {
+      error: {
+        message: e,
+      },
+    };
         return;
     }
 }
 
-export async function updateStudent(req: Request, res: Response) {
-    const { studentId } = req.params;
-    const { data } = req.body;
+export async function updateStudent(context : Koa.Context) {
+    const { studentId } = context.params;
+    const { data } = context.request.body;
 
     const studentIdInt = parseInt(studentId);
 
     try {
         const student = await studentService.updateStudent(studentIdInt, data);
 
-        res.json({
+        context.body = {
             "data": student,
-        });
+        }
     }
     catch (e: any) {
-        res.status(401).json({
-            error: {
-                message: e.message
-            }
-        });
+        context.status = 401;
+    context.body = {
+      error: {
+        message: e,
+      },
+    };
         return;
     }
 }

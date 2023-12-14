@@ -1,8 +1,8 @@
-import { Router } from 'express';
+import Router from '@koa/router';
 
-import * as teacherController from './teacher.controller';
+import * as teacherController from '../controllers/teacher.controller';
 
-const router = Router();
+const router = new Router();
 
 router.get('/', teacherController.getTeachers);
 router.get('/:id', teacherController.getTeacher);
