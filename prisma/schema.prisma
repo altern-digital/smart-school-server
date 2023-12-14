@@ -8,11 +8,12 @@ datasource db {
 }
 
 model User {
-  id         Int    @id @default(autoincrement())
-  identifier String @unique
+  id         Int     @id @default(autoincrement())
+  identifier String  @unique
+  nis        String? @unique
   password   String
   roleId     Int?
-  role       Role?  @relation(fields: [roleId], references: [id])
+  role       Role?   @relation(fields: [roleId], references: [id])
 
   @@index([roleId], map: "User_roleId_fkey")
 }

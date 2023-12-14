@@ -128,3 +128,5 @@ dist
 
 # user defined
 rest/
+*.xlsx
+prisma/seed.ts
