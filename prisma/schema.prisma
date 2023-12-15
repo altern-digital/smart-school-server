@@ -7,98 +7,98 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id         Int     @id @default(autoincrement())
-  identifier String  @unique
-  nis        String? @unique
-  password   String
-  roleId     Int?
-  role       Role?   @relation(fields: [roleId], references: [id])
+model attendance_report {
+  id         Int       @id @default(autoincrement())
+  date       DateTime  @default(now())
+  teacher_id Int
+  teacher    teacher   @relation(fields: [teacher_id], references: [id])
+  student    student[] @relation("attendance_report_to_student")
 
-  @@index([roleId], map: "User_roleId_fkey")
+  @@index([teacher_id], map: "attendance_report_teacher_id_fkey")
 }
 
-model Student {
-  id                Int                @id @default(autoincrement())
-  userId            Int?               @unique
-  name              String             @default("User")
-  nis               String             @default("0XXX")
-  points            Int                @default(0)
-  classroomId       Int?
-  classroom         Classroom?         @relation(fields: [classroomId], references: [id])
-  attendanceReports AttendanceReport[] @relation("AttendanceReportToStudent")
-  strikes           StudentStrike[]    @relation("StudentToStudentStrike")
-
-  @@index([classroomId], map: "Student_classroomId_fkey")
+model classroom {
+  id      Int       @id @default(autoincrement())
+  name    String
+  student student[]
+  teacher teacher[]
 }
 
-model Teacher {
-  id                Int                @id @default(autoincrement())
-  userId            Int?               @unique
-  name              String             @default("User")
-  classroomId       Int?
-  attendanceReports AttendanceReport[]
-  studentStrikes    StudentStrike[]
-  classroom         Classroom?         @relation(fields: [classroomId], references: [id])
-
-  @@index([classroomId], map: "Teacher_classroomId_fkey")
+model complaint {
+  id      Int    @id @default(autoincrement())
+  message String @default("No message")
 }
 
-model Classroom {
-  id       Int       @id @default(autoincrement())
-  name     String
-  students Student[]
-  teachers Teacher[]
+model feature_request {
+  id      Int    @id @default(autoincrement())
+  message String @default("No message")
 }
 
-model StudentStrike {
-  id          Int                @id @default(autoincrement())
-  reason      String             @default("No reason")
-  active      Boolean            @default(true)
-  date        DateTime           @default(now())
-  teacherId   Int?
-  description String             @default("No description")
-  amount      Int                @default(0)
-  typeId      Int?
-  teacher     Teacher?           @relation(fields: [teacherId], references: [id])
-  type        StudentStrikeType? @relation(fields: [typeId], references: [id])
-  students    Student[]          @relation("StudentToStudentStrike")
-
-  @@index([teacherId], map: "StudentStrike_teacherId_fkey")
-  @@index([typeId], map: "StudentStrike_typeId_fkey")
-}
-
-model StudentStrikeType {
-  id             Int             @id @default(autoincrement())
-  name           String
-  amount         Int             @default(0)
-  hasDescription Boolean         @default(false)
-  description    String?         @default("No description")
-  studentStrikes StudentStrike[]
-}
-
-model AttendanceReport {
-  id        Int       @id @default(autoincrement())
-  date      DateTime  @default(now())
-  teacherId Int
-  teacher   Teacher   @relation(fields: [teacherId], references: [id])
-  students  Student[] @relation("AttendanceReportToStudent")
-
-  @@index([teacherId], map: "AttendanceReport_teacherId_fkey")
-}
-
-model Role {
+model role {
   id   Int    @id @default(autoincrement())
   name String
-  User User[]
+  user user[]
 }
 
-model Complaint {
-  id      Int    @id @default(autoincrement())
-  message String @default("No message")
+model student {
+  id                Int                 @id @default(autoincrement())
+  user_id           Int?                @unique
+  name              String              @default("user")
+  nis               String              @default("0XXX")
+  points            Int                 @default(0)
+  classroom_id      Int?
+  classroom         classroom?          @relation(fields: [classroom_id], references: [id])
+  attendance_report attendance_report[] @relation("attendance_report_to_student")
+  student_strike    student_strike[]    @relation("student_to_student_strike")
+
+  @@index([classroom_id], map: "student_classroom_id_fkey")
 }
 
-model FeatureRequest {
-  id      Int    @id @default(autoincrement())
-  message String @default("No message")
+model student_strike {
+  id                  Int                  @id @default(autoincrement())
+  reason              String               @default("No reason")
+  active              Boolean              @default(true)
+  date                DateTime             @default(now())
+  teacher_id          Int?
+  description         String               @default("No description")
+  amount              Int                  @default(0)
+  type_id             Int?
+  teacher             teacher?             @relation(fields: [teacher_id], references: [id])
+  student_strike_type student_strike_type? @relation(fields: [type_id], references: [id])
+  student             student[]            @relation("student_to_student_strike")
+
+  @@index([teacher_id], map: "student_strike_teacher_id_fkey")
+  @@index([type_id], map: "student_strike_type_id_fkey")
+}
+
+model student_strike_type {
+  id             Int              @id @default(autoincrement())
+  name           String
+  amount         Int              @default(0)
+  hasDescription Boolean          @default(false)
+  description    String?          @default("No description")
+  student_strike student_strike[]
+}
+
+model teacher {
+  id                Int                 @id @default(autoincrement())
+  user_id           Int?                @unique
+  name              String              @default("user")
+  classroom_id      Int?
+  attendance_report attendance_report[]
+  student_strike    student_strike[]
+  classroom         classroom?          @relation(fields: [classroom_id], references: [id])
+
+  @@index([classroom_id], map: "teacher_classroom_id_fkey")
+}
+
+model user {
+  id         Int     @id @default(autoincrement())
+  identifier String  @unique
+  password   String
+  role_id    Int?
+  nis        String? @unique
+  role       role?   @relation(fields: [role_id], references: [id])
+
+  @@index([role_id], map: "user_role_id_fkey")
 }
