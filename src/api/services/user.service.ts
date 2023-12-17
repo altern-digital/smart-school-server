@@ -53,12 +53,12 @@ export async function getProfile(userId: number) {
     case "student":
       profile = await prisma.student.findUnique({
         where: {
-          user_id: userId,
+          userId: userId,
         },
         include: {
-          student_strike: {
+          strikes: {
             include: {
-              student: true,
+              students: true,
               teacher: true,
             },
           },
@@ -69,12 +69,12 @@ export async function getProfile(userId: number) {
     case "teacher":
       profile = await prisma.teacher.findUnique({
         where: {
-          user_id: userId,
+          userId: userId,
         },
         include: {
-          student_strike: {
+          studentStrikes: {
             include: {
-              student: true,
+              students: true,
               teacher: true,
             },
           },

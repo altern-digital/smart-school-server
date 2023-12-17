@@ -8,9 +8,9 @@ export async function getTeacher(teacherId: number) {
       id: teacherId,
     },
     include: {
-      student_strike: {
+      studentStrikes: {
         include: {
-          student: true,
+          students: true,
           teacher: true,
         },
       },

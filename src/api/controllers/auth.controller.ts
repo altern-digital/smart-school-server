@@ -13,8 +13,6 @@ const JWT_SECRET = process.env.JWT_SECRET;
 export async function loginUser(context : Koa.Context) {
   const { identifier, password } = context.request.body;
 
-  console.log(context.request.body);
-
   try {
     const user = await authService.loginUser(identifier, password);
 
