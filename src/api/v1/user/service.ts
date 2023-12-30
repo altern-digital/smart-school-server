@@ -1,10 +1,11 @@
-import prisma from "../../features/prisma";
+import prisma from "../../../features/prisma";
+
 
 export async function getUsers() {
   const users = await prisma.user.findMany({
     select: {
       id: true,
-      role: {
+      roles: {
         select: {
           name: true,
         },
@@ -22,7 +23,7 @@ export async function getUser(userId: number) {
     },
     select: {
       id: true,
-      role: {
+      roles: {
         select: {
           name: true,
         },
@@ -39,21 +40,17 @@ export async function getProfile(userId: number) {
       id: userId,
     },
     select: {
-      role: {
-        select: {
-          name: true,
-        },
-      },
+      type: true,
     },
   });
 
   var profile;
 
-  switch (user?.role.name) {
+  switch (user.type) {
     case "student":
       profile = await prisma.student.findUnique({
         where: {
-          userId: userId,
+          user_id: userId,
         },
         include: {
           strikes: {
@@ -62,23 +59,22 @@ export async function getProfile(userId: number) {
               teacher: true,
             },
           },
-          classroom: true,
+          class: true,
         },
       });
       break;
     case "teacher":
       profile = await prisma.teacher.findUnique({
         where: {
-          userId: userId,
+          user_id: userId,
         },
         include: {
-          studentStrikes: {
+          strikes: {
             include: {
               students: true,
               teacher: true,
             },
           },
-          classroom: true,
         },
       });
       break;

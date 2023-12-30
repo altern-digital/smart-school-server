@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client";
-import prisma from "../../features/prisma";
 import { DefaultArgs } from "@prisma/client/runtime/library";
+import prisma from "../../../features/prisma";
 
 export async function getTeacher(teacherId: number) {
   const teacher = await prisma.teacher.findUnique({
@@ -8,13 +8,12 @@ export async function getTeacher(teacherId: number) {
       id: teacherId,
     },
     include: {
-      studentStrikes: {
+      strikes: {
         include: {
           students: true,
           teacher: true,
         },
       },
-      classroom: true,
     },
   });
 
@@ -26,7 +25,7 @@ export async function getTeacher(teacherId: number) {
 }
 
 export async function getTeachers(
-  query: Prisma.TeacherFindManyArgs<DefaultArgs> = {}
+  query: Prisma.teacherFindManyArgs<DefaultArgs> = {}
 ) {
   const teachers = await prisma.teacher.findMany(query);
 
@@ -39,10 +38,10 @@ export async function sendStrikes(
   reason: string,
   students: any
 ) {
-  const strike = await prisma.studentStrike.create({
+  const strike = await prisma.student_point.create({
     data: {
       reason,
-      teacherId,
+      teacher_id: teacherId,
       amount: amount,
       students: {
         connect: students.map((student: any) => {
@@ -78,7 +77,7 @@ export async function getStrikes(teacherId: number) {
       id: teacherId,
     },
     include: {
-      studentStrikes: {
+      strikes: {
         include: {
           students: true,
           teacher: true,
@@ -87,7 +86,7 @@ export async function getStrikes(teacherId: number) {
     },
   });
 
-  return teacher?.studentStrikes;
+  return teacher?.strikes;
 }
 
 export async function updateTeacher(teacherId: number, data: any = {}) {
@@ -97,16 +96,6 @@ export async function updateTeacher(teacherId: number, data: any = {}) {
     },
     data: {
       name: data.name || undefined,
-      classroom: data.classroomId
-        ? {
-            connect: {
-              id: data.classroomId,
-            },
-          }
-        : undefined,
-    },
-    include: {
-      classroom: true,
     },
   });
 
@@ -116,14 +105,14 @@ export async function updateTeacher(teacherId: number, data: any = {}) {
 export async function createTeacher(userId: number, data: any = {}) {
   var teacher = await prisma.teacher.findUnique({
     where: {
-      userId: userId,
+      user_id: userId,
     },
   });
 
   if (!teacher) {
     teacher = await prisma.teacher.create({
       data: {
-        userId: userId,
+        user_id: userId,
       },
     });
 
@@ -131,4 +120,20 @@ export async function createTeacher(userId: number, data: any = {}) {
   }
 
   return teacher;
+}
+
+export async function getSchedules(teacherId: number) {
+  const schedules = await prisma.class_schedule.findMany({
+    where: {
+      subject: {
+        teachers: {
+          some: {
+            id: teacherId,
+          },
+        },
+      }
+    }
+  });
+
+  return schedules;
 }

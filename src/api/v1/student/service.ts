@@ -1,6 +1,6 @@
-import { Prisma } from '@prisma/client';
-import prisma from '../../features/prisma';
-import { DefaultArgs } from '@prisma/client/runtime/library';
+import { Prisma } from "@prisma/client";
+import prisma from "../../../features/prisma";
+import { DefaultArgs } from "@prisma/client/runtime/library";
 
 const starting_points = 100;
 
@@ -15,18 +15,18 @@ export async function getStudent(studentId: number) {
                     teacher: true,
                 }
             },
-            classroom: true,
+            class: true,
         },
     });
 
     if (!student) {
-        throw new Error('Student not found');
+        throw new Error("Student not found");
     }
 
     return student;
 }
 
-export async function getStudents(query: Prisma.StudentFindManyArgs<DefaultArgs> = {}) {
+export async function getStudents(query: Prisma.studentFindManyArgs<DefaultArgs> = {}) {
     const students = await prisma.student.findMany(query);
 
     return students;
@@ -43,7 +43,7 @@ export async function getStrikes(studentId: number) {
                     teacher: true,
                 }
             },
-            classroom: true,
+            class: true,
         },
     });
 
@@ -58,14 +58,14 @@ export async function updateStudent(studentId: number, data: any = {}) {
         data: {
             name: data.name || undefined,
             nis: data.nis || undefined,
-            classroom: data.classroomId ? {
+            class: data.classId ? {
                 connect: {
-                    id: data.classroomId,
+                    id: data.classId,
                 },
             } : undefined,
         },
         include: {
-            classroom: true,
+            class: true,
         },
     });
 
@@ -75,14 +75,14 @@ export async function updateStudent(studentId: number, data: any = {}) {
 export async function createStudent(userId: number, data: any = {}) {
     var student = await prisma.student.findUnique({
         where: {
-            userId: userId,
+            user_id: userId,
         },
     });
 
     if (!student) {
         student = await prisma.student.create({
             data: {
-                userId: userId,
+                user_id: userId,
                 strikes: {
                     create: [
                         {
@@ -108,4 +108,50 @@ export async function createStudent(userId: number, data: any = {}) {
     }
 
     return student;
+}
+
+export async function getAttendance(studentId: number) {
+    const student = await prisma.student.findUnique({
+        where: {
+            id: studentId,
+        },
+        include: {
+            attendances: true,
+        },
+    });
+
+    return student?.attendances;
+}
+
+export async function getAttendanceById(studentId: number, attendanceId: number) {
+    const attendance = await prisma.student_attendance.findUnique({
+        where: {
+            id: attendanceId,
+        },
+    });
+
+    return attendance;
+}
+
+export async function getFees(studentId: number) {
+    const student = await prisma.student.findUnique({
+        where: {
+            id: studentId,
+        },
+        include: {
+            fees: true,
+        },
+    });
+
+    return student?.fees;
+}
+
+export async function getFeeById(feeId: number) {
+    const fee = await prisma.student_fee.findUnique({
+        where: {
+            id: feeId,
+        },
+    });
+
+    return fee;
 }
