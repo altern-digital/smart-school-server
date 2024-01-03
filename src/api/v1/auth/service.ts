@@ -1,4 +1,6 @@
+import { user_type } from "@prisma/client";
 import prisma from "../../../features/prisma";
+import { log } from 'console';
 
 export async function loginUser(identifier: string, password: string) {
     const user = await prisma.user.findUnique({
@@ -28,6 +30,9 @@ export async function userMe(userId: number) {
 }
 
 export async function getProfile(userId: number) {
+
+    log(userId);
+
     const user = await prisma.user.findUnique({
         where: {
             id: userId,
@@ -40,7 +45,7 @@ export async function getProfile(userId: number) {
     var profile;
 
     switch (user?.type) {
-        case "student":
+        case user_type.student:
             profile = await prisma.student.findUnique({
                 where: {
                     user_id: userId,
@@ -56,7 +61,7 @@ export async function getProfile(userId: number) {
                 },
             });
             break;
-        case "teacher":
+        case user_type.teacher:
             profile = await prisma.teacher.findUnique({
                 where: {
                     user_id: userId,
@@ -69,6 +74,16 @@ export async function getProfile(userId: number) {
                         }
                     },
                 },
+            });
+            break;
+        case user_type.parent:
+            profile = await prisma.parent.findUnique({
+                where: {
+                    user_id: userId,
+                },
+                include: {
+                    student: true,
+                }
             });
             break;
         default:

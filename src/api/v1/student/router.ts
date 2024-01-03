@@ -6,6 +6,7 @@ const router = new Router();
 
 router.get("/", controller.getStudents);
 router.get("/:studentId", controller.getStudent);
+router.get("/:studentId/attendance-permission-requests", controller.getAttendance);
 router.get("/:studentId/attendances", controller.getAttendance);
 router.get("/:studentId/attendances/:id", controller.getAttendanceById);
 router.get("/:studentId/fees", controller.getFees);

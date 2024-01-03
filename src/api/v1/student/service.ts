@@ -134,16 +134,13 @@ export async function getAttendanceById(studentId: number, attendanceId: number)
 }
 
 export async function getFees(studentId: number) {
-    const student = await prisma.student.findUnique({
+    const fees = await prisma.student_fee.findMany({
         where: {
-            id: studentId,
-        },
-        include: {
-            fees: true,
+            student_id: studentId,
         },
     });
 
-    return student?.fees;
+    return fees;
 }
 
 export async function getFeeById(feeId: number) {

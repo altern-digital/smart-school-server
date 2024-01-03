@@ -87,32 +87,45 @@ model role_permission {
 }
 
 model student {
-  id           Int                  @id @default(autoincrement())
-  user_id      Int?                 @unique
-  name         String               @default("user")
-  nis          String               @default("0XXX")
-  points       Int                  @default(0)
-  class_id     Int?
-  date_created DateTime             @default(now())
-  about        String?
-  school_email String?
-  class        Class?               @relation(fields: [class_id], references: [id])
-  attendances  student_attendance[]
-  fees         student_fee[]
-  strikes      student_point[]      @relation("student_to_student_strike")
+  id                  Int                                     @id @default(autoincrement())
+  user_id             Int?                                    @unique
+  name                String                                  @default("user")
+  nis                 String                                  @unique @default("0XXX")
+  points              Int                                     @default(0)
+  class_id            Int?
+  date_created        DateTime                                @default(now())
+  about               String?
+  school_email        String?
+  class               Class?                                  @relation(fields: [class_id], references: [id])
+  attendances         student_attendance[]
+  fees                student_fee[]
+  strikes             student_point[]                         @relation("student_to_student_strike")
+  parent              parent?
+  attendance_requests student_attendance_permission_request[]
 
   @@index([user_id], map: "student_user_id_fkey")
-  @@index([nis], map: "student_nis_key")
   @@index([class_id], map: "student_class_id_fkey")
   @@index([points], map: "student_points_key")
   @@index([name], map: "student_name_key")
+}
+
+model parent {
+  id         Int     @id @default(autoincrement())
+  user_id    Int?    @unique
+  name       String  @default("user")
+  student    student @relation(fields: [student_id], references: [id])
+  student_id Int     @unique
+
+  @@index([user_id], map: "student_user_id_fkey")
+  @@index([name], map: "student_name_key")
+  @@index([student_id], map: "student_id_key")
 }
 
 model student_attendance {
   id           Int                     @id @default(autoincrement())
   student_id   Int
   date_created DateTime                @default(now())
-  type         student_attendance_type @default(value)
+  type         student_attendance_type @default(present)
   verified     Boolean                 @default(false)
   student      student                 @relation(fields: [student_id], references: [id])
 
@@ -122,18 +135,51 @@ model student_attendance {
   @@index([date_created], map: "student_attendance_date_created_key")
 }
 
+model student_attendance_permission_request {
+  id           Int                                  @id @default(autoincrement())
+  student_id   Int
+  description  String                               @default("No description")
+  attachment   String?
+  type         student_attendance_type              @default(permission)
+  status       student_attendance_permission_status @default(queued)
+  date_created DateTime                             @default(now())
+  student      student                              @relation(fields: [student_id], references: [id])
+
+  @@index([student_id], map: "student_attendance_permission_student_id_fkey")
+}
+
 model student_fee {
-  id           Int       @id @default(autoincrement())
+  id           Int                   @id @default(autoincrement())
   student_id   Int
   name         String
-  amount       Int       @default(0)
-  date         DateTime  @default(now())
-  date_created DateTime  @default(now())
-  due_date     DateTime? @default(now())
-  student      student   @relation(fields: [student_id], references: [id])
+  status       fee_status            @default(unpaid)
+  amount       Int                   @default(0)
+  date_created DateTime              @default(now())
+  due_date     DateTime?             @default(now())
+  student      student               @relation(fields: [student_id], references: [id])
+  payments     student_fee_payment[]
 
   @@index([student_id], map: "student_fee_student_id_fkey")
-  @@index([date], map: "student_fee_date_key")
+}
+
+model app_feedback {
+  id           Int      @id @default(autoincrement())
+  description  String
+  snapshot     String
+  date_created DateTime @default(now())
+}
+
+model student_fee_payment {
+  id           Int                @id @default(autoincrement())
+  fee_id       Int
+  amount       Int                @default(0)
+  description  String             @default("No description")
+  receipt      String
+  status       fee_payment_status @default(verifying)
+  fee          student_fee        @relation(fields: [fee_id], references: [id])
+  date_created DateTime           @default(now())
+
+  @@index([fee_id], map: "student_fee_payment_fee_id_fkey")
 }
 
 model student_point {
@@ -180,11 +226,16 @@ model user {
 }
 
 enum student_attendance_type {
-  value
   present
-  absent
   permission
+  absent
   sick
+}
+
+enum student_attendance_permission_status {
+  queued
+  accepted
+  rejected
 }
 
 enum user_type {
@@ -204,4 +255,15 @@ enum day {
   friday
   saturday
   sunday
+}
+
+enum fee_status {
+  paid
+  unpaid
+}
+
+enum fee_payment_status {
+  paid
+  verifying
+  rejected
 }

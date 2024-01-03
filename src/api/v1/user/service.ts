@@ -77,6 +77,15 @@ export async function getProfile(userId: number) {
           },
         },
       });
+    case "parent":
+      profile = await prisma.parent.findUnique({
+        where: {
+          user_id: userId,
+        },
+        include: {
+          student: true,
+        },
+      });
       break;
     default:
       profile = await prisma.user.findUnique({
