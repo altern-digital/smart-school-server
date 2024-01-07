@@ -4,17 +4,15 @@ import KoaLogger from "koa-logger";
 import { bodyParser } from "@koa/bodyparser";
 
 import api from "./api";
-import { log } from "console";
-
-log("Initializing app...");
+import querytypes from './middlewares/query_types';
 
 const app = new Koa();
 const router = new Router();
 
 app.use(bodyParser());
 app.use(KoaLogger());
+app.use(querytypes.middleware);
 
-log("Registering routes...");
 router.use("/api", api.routes());
 
 router.get("/", (ctx) => {
@@ -22,7 +20,5 @@ router.get("/", (ctx) => {
 });
 
 app.use(router.routes());
-
-log(router.stack.map((i) => i.methods + " " + i.path));
 
 export default app; 

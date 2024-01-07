@@ -13,5 +13,9 @@
             "database": "k8573224_smart_school",
             "username": "k8573224_smart_school"
         }
-    ]
+    ],
+    "files.associations": {
+        ".env*": "dotenv",
+        "plyconfig.json": "jsonc"
+    }
 }

@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 
 import * as service from "./service";
 import { log } from "console";
-import prisma from "../../../features/prisma";
+import prisma from "../../../services/database";
 
 dotenv.config();
 

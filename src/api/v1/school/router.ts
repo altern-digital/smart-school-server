@@ -1,7 +1,7 @@
 import Router from "@koa/router";
 import faq from "./faq/router";
 import academicCalendar from "./academic_calendar/router";
-import prisma from "../../../features/prisma";
+import prisma from "../../../services/database";
 
 const router = new Router();
 

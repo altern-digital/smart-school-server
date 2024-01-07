@@ -1,4 +1,4 @@
-import prisma from "../../../features/prisma";
+import prisma from "../../../services/database";
 import { log } from 'console';
 
 export async function getFees() {

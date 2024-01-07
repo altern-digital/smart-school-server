@@ -1,5 +1,5 @@
 import { student_attendance_permission_status, student_attendance_type } from "@prisma/client";
-import prisma from "../../../features/prisma";
+import prisma from "../../../services/database";
 import { log } from 'console';
 
 export class AttendanceRequestService

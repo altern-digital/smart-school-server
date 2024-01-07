@@ -1,5 +1,5 @@
 import { user_type } from "@prisma/client";
-import prisma from "../../../features/prisma";
+import prisma from "../../../services/database";
 import { log } from 'console';
 
 export async function loginUser(identifier: string, password: string) {

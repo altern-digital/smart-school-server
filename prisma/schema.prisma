@@ -185,6 +185,7 @@ model student_fee_payment {
 model student_point {
   id           Int       @id @default(autoincrement())
   reason       String    @default("No reason")
+  description  String    @default("No description")
   date         DateTime  @default(now())
   teacher_id   Int?
   amount       Int       @default(0)

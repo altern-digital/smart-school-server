@@ -2,6 +2,7 @@ import multer from '@koa/multer';
 import multerS3 from 'multer-s3';
 import { v4 as uuidv4 } from 'uuid';
 import { S3Client } from '@aws-sdk/client-s3';
+import { log } from 'console';
 
 var S3_BUCKET = process.env.S3_BUCKET
 var S3_REGION = process.env.S3_REGION
@@ -25,7 +26,8 @@ const upload = multer({
             cb(null, { fieldName: file.fieldname });
         },
         key: function (req, file, cb) {
-            const filename = uuidv4() + file.originalname;
+            const filename = `${uuidv4()}-${file.originalname}`;
+            
             cb(null, filename);
         }
     })

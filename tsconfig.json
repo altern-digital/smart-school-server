@@ -13,8 +13,23 @@
     "rootDir": "./src",
     "sourceMap": true,
     "moduleResolution": "node",
+    "baseUrl": "./src",
+    "isolatedModules": true,
+    "paths": {
+      "@/*": [
+        "*"
+      ]
+    },
   },
   "include": [
-    "src/**/*"
+    "src/**/*.ts"
   ],
+  "exclude": [
+    "node_modules"
+  ],
+  "ts-node": {
+    "require": [
+      "tsconfig-paths/register"
+    ]
+  }
 }

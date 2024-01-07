@@ -1,4 +1,4 @@
-import prisma from "../../../features/prisma";
+import prisma from "../../../services/database";
 
 export async function createFeedback(description: string, snapshot: string) {
 

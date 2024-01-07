@@ -60,7 +60,7 @@ export async function getTeacher(context: Koa.Context) {
 
 export async function sendStudentStrike(context: Koa.Context) {
     const { id } = context.params;
-    const { amount, reason, students } = context.request.body;
+    const { amount, description, reason, students } = context.request.body;
 
     const idInt = parseInt(id);
 
@@ -70,6 +70,7 @@ export async function sendStudentStrike(context: Koa.Context) {
             idInt,
             parseInt(amount),
             reason,
+            description,
             students,
         );
 

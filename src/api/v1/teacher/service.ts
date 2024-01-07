@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client";
 import { DefaultArgs } from "@prisma/client/runtime/library";
-import prisma from "../../../features/prisma";
+import prisma from "../../../services/database";
 
 export async function getTeacher(teacherId: number) {
   const teacher = await prisma.teacher.findUnique({
@@ -36,11 +36,13 @@ export async function sendStrikes(
   teacherId: number,
   amount: number,
   reason: string,
+  description: string,
   students: any
 ) {
   const strike = await prisma.student_point.create({
     data: {
       reason,
+      description,
       teacher_id: teacherId,
       amount: amount,
       students: {

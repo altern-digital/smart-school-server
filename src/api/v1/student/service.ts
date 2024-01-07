@@ -1,5 +1,5 @@
 import { Prisma } from "@prisma/client";
-import prisma from "../../../features/prisma";
+import prisma from "../../../services/database";
 import { DefaultArgs } from "@prisma/client/runtime/library";
 
 const starting_points = 100;
